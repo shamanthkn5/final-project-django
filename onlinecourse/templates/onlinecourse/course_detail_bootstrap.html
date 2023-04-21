@@ -50,6 +50,53 @@
                     </div>
                 {% endfor %}
             </div>
+
+        <!-- Task: show questions and choices -->
+<div class="container-fluid mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h5>Exam</h5>
+        </div>
+        {% if user.is_authenticated %}
+            <div class="card-body">
+                {% if course.exam %}
+                    <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#exam-collapse">Start Exam</button>
+                    <div id="exam-collapse" class="collapse">
+                        <form id="questionform" action="{% url 'onlinecourse:submit' course_id=course.id %}" method="post">
+                            {% csrf_token %}
+                            {% for question in questions %}
+                            <div class="card mt-1">
+                                <div class="card-header"><h5>{{ question.text }}</h5></div>
+                                {% for choice in question.choice_set.all %}
+                                <div class="form-group ml-3">
+                                    <div class="form-check">
+                                        <input type="checkbox" name="choice_{{ question.id }}_{{ choice.id }}" id="{{ question.id }}_{{ choice.id }}" class="form-check-input" value="{{ choice.id }}">
+                                        <label class="form-check-label" for="{{ question.id }}_{{ choice.id }}">
+                                            {{ choice.text }}
+                                        </label>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            
+                            {% endfor %}
+                            <input class="btn btn-success btn-block" type="submit" value="Submit">
+                        </form>
+                    </div>
+                {% else %}
+                    <p>There is no exam for this course.</p>
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="card-body">
+                <p>Please login to take the exam.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+
+
             <!-- Task: show questions and choices -->
             <!-- <HINT> Use Bootstrap Collapse to hide exam first, more details could be found here
             https://www.w3schools.com/bootstrap4/bootstrap_collapse.asp-->
@@ -98,5 +145,8 @@
             <!--Check here to see more details Bootstrap checkbox
              https://www.w3schools.com/bootstrap4/bootstrap_forms_inputs.asp-->
     </div>
+
+
+
 </body>
 </html>
